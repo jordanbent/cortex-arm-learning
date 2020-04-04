@@ -9,16 +9,16 @@ Cortex-ARM Learning is equipt with additional UI features that will aid Early-St
 ## Features
 
 ### Build Button
-![build](./images/buildbutton.png)
+![build](./images/buildbutton.PNG)
 
 ### Register View
-![RegisterView](./images/registerView.png)
+![RegisterView](./images/registerView.PNG)
 
 
 ### Performance Counter
 
 ### Stack Interface
-![Stack](./images/stack.png)
+![Stack](./images/stack.PNG)
 
 ### Array Interface
 ![allcommands](./images/allCommands.png)
