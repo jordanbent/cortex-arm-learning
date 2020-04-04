@@ -7,7 +7,7 @@ import { ConfigurationArguments } from './common';
 const ua = require('universal-analytics');
 const uuidv4 = require('uuid/v4');
 
-const extension = vscode.extensions.getExtension('jordanbent.cortex-arm-learning');
+const extension = vscode.extensions.getExtension('marus25.cortex-debug');
 const extensionId = extension.id;
 const extensionVersion = extension.packageJSON.version;
 const trackingId = 'UA-113901869-1';
@@ -32,7 +32,7 @@ interface UserSettings {
 
 function getUUID(): string {
     if (!uuid) {
-        const settingspath = path.join(os.homedir(), '.cortex-arm-learning');
+        const settingspath = path.join(os.homedir(), '.cortex-debug-master');
         if (fs.existsSync(settingspath)) {
             const data = fs.readFileSync(settingspath, 'utf8');
             const settings: UserSettings = JSON.parse(data);
@@ -50,7 +50,7 @@ function getUUID(): string {
 
 function telemetryEnabled(): boolean {
     const telemetry = vscode.workspace.getConfiguration('telemetry');
-    const cortexDebug = vscode.workspace.getConfiguration('cortex-arm-learning');
+    const cortexDebug = vscode.workspace.getConfiguration('cortex-debug-master');
 
     return (telemetry.enableTelemetry && cortexDebug.enableTelemetry);
 }
@@ -83,7 +83,7 @@ function beginSession(opts: ConfigurationArguments) {
     if (opts.device) { analytics.set(DEVICE_ID_DIMENSION, opts.device); }
     analytics.set(GDB_SERVER_TYPE_DIMENSION, opts.servertype);
     
-    analytics.screenview('Debug Session', 'Cortex-Arm Learning', extensionVersion, extensionId);
+    analytics.screenview('Debug Session', 'Cortex-Debug-Master', extensionVersion, extensionId);
     analytics.event('Session', 'Started', '', 0, { sessionControl: 'start' });
 
     if (opts.swoConfig.enabled) {

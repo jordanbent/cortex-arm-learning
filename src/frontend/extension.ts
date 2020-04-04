@@ -65,6 +65,7 @@ export class CortexDebugExtension {
 
     		provideTextDocumentContent(uri: vscode.Uri): string {
                 console.log(uri)
+                
                 fs.readFile(uri.path, function read(err, data) {
                     if (err) {
                         throw err;
@@ -108,7 +109,7 @@ export class CortexDebugExtension {
             vscode.workspace.registerTextDocumentContentProvider('disassembly', new DisassemblyContentProvider()),
 
             vscode.commands.registerCommand('cortex-arm-learning.lookup', async () => {
-                const uri = vscode.Uri.file('C:/Users/Jordan.jordanspc/Desktop/FYP/cotrex-development-extension/cortex-arm-learning/src/frontend/lookup.txt');
+                const uri = vscode.Uri.file(process.cwd()+'\\lookup.txt');
                 uri.scheme === 'file';
                 console.log(uri)                                                                
                 

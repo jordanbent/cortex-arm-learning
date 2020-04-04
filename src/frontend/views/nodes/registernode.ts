@@ -26,6 +26,10 @@ export class RegisterNode extends BaseNode {
          var hexNumber = this.hexString2hexNumber(hexValue);
          var binary = hexNumber.toString(2);
          let leadingZeros = binary.length % 4;
+         if(leadingZeros == 1)
+            leadingZeros = 3;
+         else if(leadingZeros == 3)
+            leadingZeros = 1;
          let add = '';
          if(leadingZeros > 0)
          {

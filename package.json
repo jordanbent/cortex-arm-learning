@@ -14,7 +14,7 @@
             "type": "object",
             "title": "Cortex-ARM-Learning Configuration",
             "properties": {
-                "cortex-arm-learning.armToolchainPath": {
+                "cortex-debug.armToolchainPath": {
                     "type": [
                         "string",
                         "null"
@@ -22,7 +22,7 @@
                     "default": null,
                     "description": "Path to the GCC Arm Toolchain (standard prefix is \"arm-none-eabi\" - can be set through the armToolchainPrefix setting) to use. If not set the tools must be on the system path. Do not include the executable file name in this path."
                 },
-                "cortex-arm-learning.armToolchainPrefix": {
+                "cortex-debug.armToolchainPrefix": {
                     "type": [
                         "string",
                         "null"
@@ -30,7 +30,7 @@
                     "default": "arm-none-eabi",
                     "description": "The prefix to use for the arm toolchain - the standard release from arm uses \"arm-none-eabi\" but alternative toolchains may use a different prefix. Currently the gdb and objdump tools are needed."
                 },
-                "cortex-arm-learning.JLinkGDBServerPath": {
+                "cortex-debug.JLinkGDBServerPath": {
                     "type": [
                         "string",
                         "null"
@@ -38,7 +38,7 @@
                     "default": null,
                     "description": "Path to the JLink GDB Server. If not set then JLinkGDBServer (JLinkGDBServerCL.exe on Windows) must be on the system path."
                 },
-                "cortex-arm-learning.openocdPath": {
+                "cortex-debug.openocdPath": {
                     "type": [
                         "string",
                         "null"
@@ -46,7 +46,7 @@
                     "default": null,
                     "description": "Path to the OpenOCD GDB Server executable. If not set then openocd (openocd.exe on Windows) must be on the system path."
                 },
-                "cortex-arm-learning.pyocdPath": {
+                "cortex-debug.pyocdPath": {
                     "type": [
                         "string",
                         "null"
@@ -54,7 +54,7 @@
                     "default": null,
                     "description": "Path to the PyOCD GDB Server executable. If not set then pyocd-gdbserver must be on the system path."
                 },
-                "cortex-arm-learning.PEGDBServerPath": {
+                "cortex-debug.PEGDBServerPath": {
                     "type": [
                         "string",
                         "null"
@@ -62,7 +62,7 @@
                     "default": null,
                     "description": "Path to the PEMicro GDB Server. If not set then PEGDBServer (pegdbserver_console.exe on Windows) must be on the system path."
                 },
-                "cortex-arm-learning.stutilPath": {
+                "cortex-debug.stutilPath": {
                     "type": [
                         "string",
                         "null"
@@ -70,17 +70,17 @@
                     "default": null,
                     "description": "Path to the Texane's ST-Util GDB Server executable. If not set then st-util (st-util.exe on Windows) must be on the system path."
                 },
-                "cortex-arm-learning.enableTelemetry": {
+                "cortex-debug.enableTelemetry": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Enable Telemetry for the cortex-arm-learning Extension. Reporting will also respect the global telemetry.enableTelemetry setting."
+                    "description": "Enable Telemetry for the Cortex-Debug Extension. Reporting will also respect the global telemetry.enableTelemetry setting."
                 },
-                "cortex-arm-learning.flattenAnonymous": {
+                "cortex-debug.flattenAnonymous": {
                     "type": "boolean",
                     "default": false,
                     "description": "If true, anonymous unions/structs are flattened in their parent data structure"
                 },
-                "cortex-arm-learning.registerUseNaturalFormat": {
+                "cortex-debug.registerUseNaturalFormat": {
                     "type": "boolean",
                     "default": true,
                     "description": "If true, display registers in their natural format as specified by ARM. Hex otherwise."
@@ -91,6 +91,14 @@
             {
                 "command": "cortex-arm-learning.make",
                 "title": "Build"
+            },
+            {
+                "command": "cortex-arm-learning.performancecounter",
+                "title": "Performance Counter",
+                "icon": {
+                    "light": "resources/light/edit.svg",
+                    "dark": "resources/dark/edit.svg"
+                }
             },
             {
                 "command": "cortex-arm-learning.peripherals.updateNode",
@@ -133,12 +141,7 @@
                 "title": "Refresh"
             },
             {
-                "category": "Cortex-ARM",
-                "command": "cortex-arm-learning.examineArray",
-                "title": "View Array"
-            },
-            {
-                "category": "Cortex-ARM",
+                "category": "Cortex-Debug",
                 "command": "cortex-arm-learning.examineMemory",
                 "title": "View Memory"
             },
@@ -149,11 +152,16 @@
             },
             {
                 "category": "Cortex-ARM",
+                "command": "cortex-arm-learning.examineArray",
+                "title": "View Array"
+            },
+            {
+                "category": "Cortex-Debug",
                 "command": "cortex-arm-learning.viewDisassembly",
                 "title": "View Disassembly (Function)"
             },
             {
-                "category": "Cortex-ARM",
+                "category": "Cortex-Debug",
                 "command": "cortex-arm-learning.setForceDisassembly",
                 "title": "Set Force Disassembly"
             }
@@ -162,7 +170,7 @@
             {
                 "id": "cortex-arm-learning.disassembly",
                 "aliases": [
-                    "cortex-arm-learning Disassembly"
+                    "Cortex-Debug Disassembly"
                 ],
                 "extensions": [
                     ".cdasm"
@@ -171,7 +179,7 @@
             {
                 "id": "cortex-arm-learning.memoryview",
                 "aliases": [
-                    "ARM: Memory View"
+                    "Cortex-Debug Memory View"
                 ],
                 "extensions": [
                     ".cdmem"
@@ -181,13 +189,13 @@
         "grammars": [
             {
                 "language": "cortex-arm-learning.disassembly",
-                "scopeName": "source.cortex-arm-learning-disassembly",
-                "path": "./syntaxes/cortex-arm-learning-disassembly.json"
+                "scopeName": "source.cortex-debug-disassembly",
+                "path": "./syntaxes/cortex-debug-disassembly.json"
             },
             {
                 "language": "cortex-arm-learning.memoryview",
-                "scopeName": "source.cortex-arm-learning-memoryview",
-                "path": "./syntaxes/cortex-arm-learning-memoryview.json"
+                "scopeName": "source.cortex-debug-memoryview",
+                "path": "./syntaxes/cortex-debug-memoryview.json"
             }
         ],
         "debuggers": [
@@ -267,7 +275,7 @@
                                 "description": "Additional GDB Commands to be executed at the end of the re-start sequence, after a debug session has already started."
                             },
                             "overrideGDBServerStartedRegex": {
-                                "description": "You can supply a regular expression (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) in the configuration property to override the output from the GDB server that is looked for to determine if the GDB server has started. Under most circumstances this will not be necessary - but could be needed as a result of a change in the output of a GDB server making it incompatible with cortex-arm-learning. This property has no effect for bmp or external GDB server types.",
+                                "description": "You can supply a regular expression (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) in the configuration property to override the output from the GDB server that is looked for to determine if the GDB server has started. Under most circumstances this will not be necessary - but could be needed as a result of a change in the output of a GDB server making it incompatible with cortex-debug. This property has no effect for bmp or external GDB server types.",
                                 "type": "string",
                                 "default": null
                             },
@@ -817,7 +825,7 @@
                                 "description": "Additional GDB Commands to be executed at the end of the re-start sequence, after a debug session has already started."
                             },
                             "overrideGDBServerStartedRegex": {
-                                "description": "You can supply a regular expression (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) in the configuration property to override the output from the GDB server that is looked for to determine if the GDB server has started. Under most circumstances this will not be necessary - but could be needed as a result of a change in the output of a GDB server making it incompatible with cortex-arm-learning. This property has no effect for bmp or external GDB server types.",
+                                "description": "You can supply a regular expression (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions) in the configuration property to override the output from the GDB server that is looked for to determine if the GDB server has started. Under most circumstances this will not be necessary - but could be needed as a result of a change in the output of a GDB server making it incompatible with cortex-debug. This property has no effect for bmp or external GDB server types.",
                                 "type": "string",
                                 "default": null
                             },
@@ -1362,7 +1370,7 @@
                 },
                 "initialConfigurations": [
                     {
-                        "name": "Cortex Debug Master",
+                        "name": "Cortex ARM Learning",
                         "cwd": "${workspaceRoot}",
                         "executable": "./bin/executable.elf",
                         "request": "launch",
@@ -1371,7 +1379,7 @@
                     }
                 ],
                 "extensions": [],
-                "label": "Cortex Debug Master",
+                "label": "Cortex ARM Learning",
                 "program": "./dist/debugadapter.js",
                 "runtime": "node",
                 "type": "cortex-arm-learning",
@@ -1405,11 +1413,11 @@
                     "when": "debugType == cortex-arm-learning"
                 },
                 {
-                    "command": "cortex-arm-learning.examineMemory",
+                    "command": "cortex-arm-learning.examineArray",
                     "when": "debugType == cortex-arm-learning"
                 },
                 {
-                    "command": "cortex-arm-learning.examineArray",
+                    "command": "cortex-arm-learning.examineMemory",
                     "when": "debugType == cortex-arm-learning"
                 },
                 {
@@ -1504,12 +1512,12 @@
             "debug": [
                 {
                     "id": "cortex-arm-learning.peripherals",
-                    "name": "Peripherals",
+                    "name": "Peripherals ",
                     "when": "debugType == cortex-arm-learning"
                 },
                 {
                     "id": "cortex-arm-learning.registers",
-                    "name": "Registers",
+                    "name": "Registers ",
                     "when": "debugType == cortex-arm-learning"
                 },
                 {
@@ -1533,9 +1541,7 @@
         "commander": "^2.20.0",
         "d3": "^5.9.2",
         "debug": "^4.1.1",
-        "fs": "0.0.1-security",
         "hasbin": "^1.2.3",
-        "hex-to-binary": "^1.0.1",
         "nan": "^2.14.0",
         "prebuild-install": "^5.3.0",
         "promirepl": "^1.0.1",
@@ -1550,7 +1556,7 @@
         "vscode-extension-telemetry": "0.1.1",
         "xml2js": "^0.4.19"
     },
-    "description": "ARM Cortex-M GDB Debugger support for VSCode",
+    "description": "ARM Cortex-M GDB VSCode Debugger with features intended to aid Early-Stage Programmers.",
     "devDependencies": {
         "@types/binary-parser": "^1.3.1",
         "@types/mocha": "^5.2.7",
@@ -1563,7 +1569,7 @@
         "webpack": "^4.35.0",
         "webpack-cli": "^3.3.4"
     },
-    "displayName": "Cortex-ARM Learning Development",
+    "displayName": "Cortex-ARM Learning",
     "engines": {
         "vscode": "^1.34.0"
     },
@@ -1585,6 +1591,7 @@
     "main": "./dist/extension",
     "name": "cortex-arm-learning",
     "preview": true,
+    "publisher": "jordanbent",
     "repository": {
         "type": "git",
         "url": "https://github.com/jordanbent/cortex-arm-learning.git"

@@ -43261,7 +43261,7 @@ class CortexDebugConfigurationProvider {
                 validationResponse = 'Invalid servertype parameters. The following values are supported: "jlink", "openocd", "stutil", "pyocd", "bmp", "pe", "qemu", "external"';
                 break;
         }
-        const configuration = vscode.workspace.getConfiguration('cortex-debug-master');
+        const configuration = vscode.workspace.getConfiguration('cortex-arm-learning');
         if (config.armToolchainPath) {
             config.toolchainPath = config.armToolchainPath;
         }
@@ -43314,7 +43314,7 @@ class CortexDebugConfigurationProvider {
             config.interface = 'swd';
         }
         if (!config.serverpath) {
-            const configuration = vscode.workspace.getConfiguration('cortex-debug-master');
+            const configuration = vscode.workspace.getConfiguration('cortex-arm-learning');
             config.serverpath = configuration.JLinkGDBServerPath;
         }
         if (config.rtos) {
@@ -43342,7 +43342,7 @@ class CortexDebugConfigurationProvider {
             config.serverpath = config.openOCDPath;
         }
         if (!config.serverpath) {
-            const configuration = vscode.workspace.getConfiguration('cortex-debug-master');
+            const configuration = vscode.workspace.getConfiguration('cortex-arm-learning');
             config.serverpath = configuration.openocdPath;
         }
         if (config.rtos && OPENOCD_VALID_RTOS.indexOf(config.rtos) === -1) {
@@ -43361,7 +43361,7 @@ class CortexDebugConfigurationProvider {
             config.serverpath = config.stutilpath;
         }
         if (!config.serverpath) {
-            const configuration = vscode.workspace.getConfiguration('cortex-debug-master');
+            const configuration = vscode.workspace.getConfiguration('cortex-arm-learning');
             config.serverpath = configuration.stutilPath;
         }
         if (config.rtos) {
@@ -43379,7 +43379,7 @@ class CortexDebugConfigurationProvider {
             config.serverpath = config.pyocdPath;
         }
         if (!config.serverpath) {
-            const configuration = vscode.workspace.getConfiguration('cortex-debug-master');
+            const configuration = vscode.workspace.getConfiguration('cortex-arm-learning');
             config.serverpath = configuration.pyocdPath;
         }
         if (config.rtos) {
@@ -43423,7 +43423,7 @@ class CortexDebugConfigurationProvider {
     }
     verifyPEConfiguration(folder, config) {
         if (!config.serverpath) {
-            const configuration = vscode.workspace.getConfiguration('cortex-debug-master');
+            const configuration = vscode.workspace.getConfiguration('cortex-arm-learning');
             config.serverpath = configuration.PEGDBServerPath;
         }
         if (config.configFiles && config.configFiles.length > 1) {
@@ -43580,29 +43580,29 @@ class CortexDebugExtension {
         }
         catch (e) { }
         reporting_1.default.activate(context);
-        this.peripheralTreeView = vscode.window.createTreeView('cortex-debug-master.peripherals', {
+        this.peripheralTreeView = vscode.window.createTreeView('cortex-arm-learning.peripherals', {
             treeDataProvider: this.peripheralProvider
         });
-        this.registerTreeView = vscode.window.createTreeView('cortex-debug-master.registers', {
+        this.registerTreeView = vscode.window.createTreeView('cortex-arm-learning.registers', {
             treeDataProvider: this.registerProvider
         });
-        this.counterTreeView = vscode.window.createTreeView('cortex-debug-master.counter', {
+        this.counterTreeView = vscode.window.createTreeView('cortex-arm-learning.counter', {
             treeDataProvider: this.counterProvider
         });
-        this.stackTreeView = vscode.window.createTreeView('cortex-debug-master.stack', {
+        this.stackTreeView = vscode.window.createTreeView('cortex-arm-learning.stack', {
             treeDataProvider: this.stackProvider
         });
-        context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('lookup', myProvider), vscode.workspace.registerTextDocumentContentProvider('examinememory', this.memoryProvider), vscode.workspace.registerTextDocumentContentProvider('examinearray', this.arrayProvider), vscode.workspace.registerTextDocumentContentProvider('disassembly', new disassembly_content_provider_1.DisassemblyContentProvider()), vscode.commands.registerCommand('cortex-debug-master.lookup', () => __awaiter(this, void 0, void 0, function* () {
-            const uri = vscode.Uri.file('C:/Users/Jordan.jordanspc/Desktop/FYP/cotrex-development-extension/cortex-debug-master/src/frontend/lookup.txt');
+        context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('lookup', myProvider), vscode.workspace.registerTextDocumentContentProvider('examinememory', this.memoryProvider), vscode.workspace.registerTextDocumentContentProvider('examinearray', this.arrayProvider), vscode.workspace.registerTextDocumentContentProvider('disassembly', new disassembly_content_provider_1.DisassemblyContentProvider()), vscode.commands.registerCommand('cortex-arm-learning.lookup', () => __awaiter(this, void 0, void 0, function* () {
+            const uri = vscode.Uri.file(process.cwd() + '\\lookup.txt');
             uri.scheme === 'file';
             console.log(uri);
             let doc = yield vscode.workspace.openTextDocument(uri); // calls back into the provider
             yield vscode.window.showTextDocument(doc, { preview: false });
-        })), vscode.commands.registerCommand('cortex-debug-master.peripherals.updateNode', this.peripheralsUpdateNode.bind(this)), vscode.commands.registerCommand('cortex-debug-master.peripherals.copyValue', this.peripheralsCopyValue.bind(this)), vscode.commands.registerCommand('cortex-debug-master.peripherals.setFormat', this.peripheralsSetFormat.bind(this)), vscode.commands.registerCommand('cortex-debug-master.peripherals.forceRefresh', this.peripheralsForceRefresh.bind(this)), vscode.commands.registerCommand('cortex-debug-master.stack.copyValue', this.stackCopyValue.bind(this)), vscode.commands.registerCommand('cortex-debug-master.registers.copyValue', this.registersCopyValue.bind(this)), vscode.commands.registerCommand('cortex-debug-master.examineMemory', this.examineMemory.bind(this)), vscode.commands.registerCommand('cortex-debug-master.examineArray', this.examineArray.bind(this)), vscode.commands.registerCommand('cortex-debug-master.viewDisassembly', this.showDisassembly.bind(this)), vscode.commands.registerCommand('cortex-debug-master.setForceDisassembly', this.setForceDisassembly.bind(this)), vscode.debug.onDidReceiveDebugSessionCustomEvent(this.receivedCustomEvent.bind(this)), vscode.debug.onDidStartDebugSession(this.debugSessionStarted.bind(this)), vscode.debug.onDidTerminateDebugSession(this.debugSessionTerminated.bind(this)), vscode.window.onDidChangeActiveTextEditor(this.activeEditorChanged.bind(this)), vscode.window.onDidChangeTextEditorSelection((e) => {
+        })), vscode.commands.registerCommand('cortex-arm-learning.peripherals.updateNode', this.peripheralsUpdateNode.bind(this)), vscode.commands.registerCommand('cortex-arm-learning.peripherals.copyValue', this.peripheralsCopyValue.bind(this)), vscode.commands.registerCommand('cortex-arm-learning.peripherals.setFormat', this.peripheralsSetFormat.bind(this)), vscode.commands.registerCommand('cortex-arm-learning.peripherals.forceRefresh', this.peripheralsForceRefresh.bind(this)), vscode.commands.registerCommand('cortex-arm-learning.stack.copyValue', this.stackCopyValue.bind(this)), vscode.commands.registerCommand('cortex-arm-learning.registers.copyValue', this.registersCopyValue.bind(this)), vscode.commands.registerCommand('cortex-arm-learning.examineMemory', this.examineMemory.bind(this)), vscode.commands.registerCommand('cortex-arm-learning.examineArray', this.examineArray.bind(this)), vscode.commands.registerCommand('cortex-arm-learning.viewDisassembly', this.showDisassembly.bind(this)), vscode.commands.registerCommand('cortex-arm-learning.setForceDisassembly', this.setForceDisassembly.bind(this)), vscode.debug.onDidReceiveDebugSessionCustomEvent(this.receivedCustomEvent.bind(this)), vscode.debug.onDidStartDebugSession(this.debugSessionStarted.bind(this)), vscode.debug.onDidTerminateDebugSession(this.debugSessionTerminated.bind(this)), vscode.window.onDidChangeActiveTextEditor(this.activeEditorChanged.bind(this)), vscode.window.onDidChangeTextEditorSelection((e) => {
             if (e && e.textEditor.document.fileName.endsWith('.cdmem')) {
                 this.memoryProvider.handleSelection(e);
             }
-        }), vscode.debug.registerDebugConfigurationProvider('cortex-debug-master', new configprovider_1.CortexDebugConfigurationProvider(context)), this.stackTreeView, this.stackTreeView.onDidCollapseElement((e) => {
+        }), vscode.debug.registerDebugConfigurationProvider('cortex-arm-learning', new configprovider_1.CortexDebugConfigurationProvider(context)), this.stackTreeView, this.stackTreeView.onDidCollapseElement((e) => {
             e.element.expanded = false;
         }), this.stackTreeView.onDidExpandElement((e) => {
             e.element.expanded = true;
@@ -43633,7 +43633,7 @@ class CortexDebugExtension {
         this.SVDDirectory.push({ expression: expression, path: path });
     }
     activeEditorChanged(editor) {
-        if (editor !== undefined && vscode.debug.activeDebugSession && vscode.debug.activeDebugSession.type === 'cortex-debug-master') {
+        if (editor !== undefined && vscode.debug.activeDebugSession && vscode.debug.activeDebugSession.type === 'cortex-arm-learning') {
             const uri = editor.document.uri;
             if (uri.scheme === 'file') {
                 // vscode.debug.activeDebugSession.customRequest('set-active-editor', { path: uri.path });
@@ -43953,7 +43953,7 @@ class CortexDebugExtension {
     }
     // Debug Events
     debugSessionStarted(session) {
-        if (session.type !== 'cortex-debug-master') {
+        if (session.type !== 'cortex-arm-learning') {
             return;
         }
         // Clean-up Old output channels
@@ -43980,7 +43980,7 @@ class CortexDebugExtension {
         });
     }
     debugSessionTerminated(session) {
-        if (session.type !== 'cortex-debug-master') {
+        if (session.type !== 'cortex-arm-learning') {
             return;
         }
         reporting_1.default.endSession();
@@ -43998,7 +43998,7 @@ class CortexDebugExtension {
         this.clearAdapterOutputChannel = true;
     }
     receivedCustomEvent(e) {
-        if (vscode.debug.activeDebugSession && vscode.debug.activeDebugSession.type !== 'cortex-debug-master') {
+        if (vscode.debug.activeDebugSession && vscode.debug.activeDebugSession.type !== 'cortex-arm-learning') {
             return;
         }
         switch (e.event) {
@@ -44103,7 +44103,7 @@ function interpolateString(tpl, data) {
     return tpl;
 }
 function activate(context) {
-    console.log('Congratulations, your extension "cortex-debug-master" is now active!');
+    console.log('Congratulations, your extension "cortex-arm-learning" is now active!');
     const command = 'cortex-debud-master.make';
     const commandHandler = () => {
         const vars = {
@@ -44142,7 +44142,7 @@ function activate(context) {
     makeButton.color = 'white';
     makeButton.command = command;
     makeButton.text = 'Build - Debugger';
-    makeButton.tooltip = 'cortex-debug-master';
+    makeButton.tooltip = 'cortex-arm-learning';
     makeButton.show();
     return new CortexDebugExtension(context);
 }
@@ -44475,7 +44475,9 @@ class MemoryContentProvider {
                             }
                             else if (display === 'DEC' || display === 'DECIMAL' || display === '10') {
                                 byteNum = utils_1.hexFormat(bytes[i + 3], 2, false) + utils_1.hexFormat(bytes[i + 2], 2, false) + utils_1.hexFormat(bytes[i + 1], 2, false) + utils_1.hexFormat(bytes[i], 2, false);
-                                byte = (parseInt(byteNum)).toString(10);
+                                console.log('byte', byteNum);
+                                console.log('numb', parseInt(byteNum, 16));
+                                byte = (parseInt(byteNum, 16)).toString(10);
                             }
                             else if (display === 'BIN' || display === 'BINARY' || display === '2') {
                                 byteNum = '0X' + utils_1.hexFormat(bytes[i + 3], 2, false) + utils_1.hexFormat(bytes[i + 2], 2, false) + utils_1.hexFormat(bytes[i + 1], 2, false) + utils_1.hexFormat(bytes[i], 2, false);
@@ -46167,7 +46169,7 @@ class CounterTreeProvider {
     }
     debugSessionTerminated() {
         if (vscode_1.workspace.workspaceFolders && vscode_1.workspace.workspaceFolders.length > 0) {
-            const fspath = path.join(vscode_1.workspace.workspaceFolders[0].uri.fsPath, '.vscode', '.cortex-debug-master.counter.state.json');
+            const fspath = path.join(vscode_1.workspace.workspaceFolders[0].uri.fsPath, '.vscode', '.cortex-arm-learning.counter.state.json');
             this._saveState(fspath);
         }
         this.loaded = false;
@@ -47116,6 +47118,10 @@ class RegisterNode extends basenode_1.BaseNode {
         var hexNumber = this.hexString2hexNumber(hexValue);
         var binary = hexNumber.toString(2);
         let leadingZeros = binary.length % 4;
+        if (leadingZeros == 1)
+            leadingZeros = 3;
+        else if (leadingZeros == 3)
+            leadingZeros = 1;
         let add = '';
         if (leadingZeros > 0) {
             for (; leadingZeros > 0; leadingZeros--) {
@@ -47380,7 +47386,7 @@ class PeripheralTreeProvider {
             if (svdfile) {
                 setTimeout(() => {
                     this.loadSVD(svdfile).then(() => {
-                        vscode.workspace.findFiles('.vscode/.cortex-debug-master.peripherals.state.json', null, 1).then((value) => {
+                        vscode.workspace.findFiles('.vscode/.cortex-arm-learning.peripherals.state.json', null, 1).then((value) => {
                             if (value.length > 0) {
                                 const fspath = value[0].fsPath;
                                 const data = fs.readFileSync(fspath, 'utf8');
@@ -47421,7 +47427,7 @@ class PeripheralTreeProvider {
     }
     debugSessionTerminated() {
         if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-            const fspath = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode', '.cortex-debug-master.peripherals.state.json');
+            const fspath = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.vscode', '.cortex-arm-learning.peripherals.state.json');
             this.saveState(fspath);
         }
         this.peripherials = [];
@@ -47527,7 +47533,7 @@ class RegisterTreeProvider {
             }
         });
         this.loaded = true;
-        vscode_1.workspace.findFiles('.vscode/.cortex-debug-master.registers.state.json', null, 1).then((value) => {
+        vscode_1.workspace.findFiles('.vscode/.cortex-arm-learning.registers.state.json', null, 1).then((value) => {
             if (value.length > 0) {
                 const fspath = value[0].fsPath;
                 const data = fs.readFileSync(fspath, 'utf8');
@@ -47591,7 +47597,7 @@ class RegisterTreeProvider {
     }
     debugSessionTerminated() {
         if (vscode_1.workspace.workspaceFolders && vscode_1.workspace.workspaceFolders.length > 0) {
-            const fspath = path.join(vscode_1.workspace.workspaceFolders[0].uri.fsPath, '.vscode', '.cortex-debug-master.registers.state.json');
+            const fspath = path.join(vscode_1.workspace.workspaceFolders[0].uri.fsPath, '.vscode', '.cortex-arm-learning.registers.state.json');
             this._saveState(fspath);
         }
         this.loaded = false;
@@ -47748,7 +47754,7 @@ class StackTreeProvider {
     }
     debugSessionTerminated() {
         if (vscode_1.workspace.workspaceFolders && vscode_1.workspace.workspaceFolders.length > 0) {
-            const fspath = path.join(vscode_1.workspace.workspaceFolders[0].uri.fsPath, '.vscode', '.cortex-debug-master.stack.state.json');
+            const fspath = path.join(vscode_1.workspace.workspaceFolders[0].uri.fsPath, '.vscode', '.cortex-arm-learning.stack.state.json');
             this._saveState(fspath);
         }
         this.loaded = false;

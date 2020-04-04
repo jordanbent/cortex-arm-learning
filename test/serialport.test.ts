@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as vscode from 'vscode';
 
 suite('Serial Port tests', () => {
-    const extensionPath = vscode.extensions.getExtension('jordanbent.cortex-arm-learning').extensionPath;
+    const extensionPath = vscode.extensions.getExtension('marus25.cortex-debug').extensionPath;
     const binaryPath = path.normalize(path.join(extensionPath, 'binary_modules', process.version,
         os.platform(), process.arch, 'node_modules'));
     test('Serial Port exists', async () => {

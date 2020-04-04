@@ -22,7 +22,7 @@ if [[ $? -ne 0 ]] ; then
 fi
 
 if [[ ! -d ./binary_modules ]] ; then
-    # Chances are you are not in the root directory of cortex-arm
+    # Chances are you are not in the root directory of cortex-debug
     echo "Error: ./binary_modules does not exist"
     exit 1
 fi

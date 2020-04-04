@@ -83,7 +83,9 @@ export class MemoryContentProvider implements vscode.TextDocumentContentProvider
                             else if(display === 'DEC' || display === 'DECIMAL' || display === '10')
                             {
                                 byteNum = hexFormat(bytes[i+3], 2, false)+hexFormat(bytes[i+2], 2, false)+hexFormat(bytes[i+1], 2, false)+hexFormat(bytes[i], 2, false);
-                                byte = (parseInt(byteNum)).toString(10)
+                                console.log('byte', byteNum)
+                                console.log('numb', parseInt(byteNum,16))
+                                byte = (parseInt(byteNum,16)).toString(10)
                             }
                             else if(display === 'BIN' || display === 'BINARY' || display === '2')
                             {
