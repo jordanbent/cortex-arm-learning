@@ -16,6 +16,7 @@ Cortex-ARM Learning is equipt with additional UI features that will aid Early-St
 
 
 ### Performance Counter
+![counter](./images/counter.png)
 
 ### Stack Interface
 ![Stack](./images/stack.PNG)
@@ -34,29 +35,44 @@ Cortex-ARM Learning is equipt with additional UI features that will aid Early-St
 
 ### Reference Table
 
-testign
+
+### Other
 These features are all in addition to the already existing features of the debugger which include the following:
 
 - Memory Access
 - Diassembly Window 
 
-## Installation
+## Setup
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+### VS Code
+
+### ARM Assembly Project File
+
+[CortexARM Project File](https://github.com/jordanbent/CortexARM-ProjectFile)
+
+### Environment
+
+In C:/
+VSARM
+
+Command Line
 
 ```bash
-pip install foobar
+C:\>setx PATH "C:\VSARM\armcc\bin"
+C:\>setx PATH "C:\VSARM\mingw\mingw32\bin"
 ```
+f1 - Settings JSON : add 
+"cortex-debug.armToolchainPath": "${env:VSARM}\\armcc\\bin\\",
+"cortex-debug.JLinkGDBServerPath": "${env:VSARM}\\JLink\\JLinkGDBServer.exe",
+
+[tutorial](https://hbfsrobotics.com/blog/configuring-vs-code-arm-development-stm32cubemx)
+
+### Board
+Currently Setup for STM32F411 Cortex M-4 core 
+If have a different version of the board, find .svd file and all to .ignore file and in vscode folder change launch file for project.
 
 ## Usage
 
-```python
-import foobar
-
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
-```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
@@ -66,5 +82,5 @@ Please make sure to update tests as appropriate.
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 
-##Acknowledgments
+## Acknowledgments
 This extension is built upon Jurzitza's (WebFreak) code-debug extension (https://github.com/WebFreak001/code-debug). His project provided an excellent base for GDB MI parsing and interaction.
