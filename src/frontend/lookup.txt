@@ -1,0 +1,284 @@
+Look-up Table for ARM Assembly Instructions
+
+Use for Cortex Debug Master Extension for Visual Studio Code
+
+1. Instructions
+
+    Rc = Destination Register
+    Rn = 
+    <Oprnd2> = 
+    {cond} = 
+    {S} = 
+
+    1.1 Move
+
+    Move        MOV{cond}{S} Rd, <Oprnd2>
+    Move NOT    MVN{cond}{S} Rd, <Oprnd2>
+
+    1.2 Arithmetic
+
+    Add                                         ADD{cond}{S} Rd, Rn, <Oprnd2>
+    Add with carry                              ADC{cond}{S} Rd, Rn, <Oprnd2>
+    Subtract                                    SUB{cond}{S} Rd, Rn, <Oprnd2>
+    Subtract with carry                         SBC{cond}{S} Rd, Rn, <Oprnd2>
+    Subtract reverse subtract                   RSB{cond}{S} Rd, Rn, <Oprnd2>
+    Subtract reverse subtract with carry        RSC{cond}{S} Rd, Rn, <Oprnd2>
+    Multiply                                    MUL{cond}{S} Rd, Rm, Rs
+    Multiply accumulate                         MLA{cond}{S} Rd, Rm, Rs, Rn
+    Multiply unsigned long                      UMULL{cond}{S} RdLo, RdHi, Rm, Rs
+    Multiply unsigned accumulate long           UMLAL{cond}{S} RdLo, RdHi, Rm, Rs
+    Multiply signed long                        SMULL{cond}{S} RdLo, RdHi, Rm, Rs
+    Multiply signed accumulate long             SMLAL{cond}{S} RdLo, RdHi, Rm, Rs
+
+    1.2 Memory
+
+    1.2.1 LOAD
+    Word                                        LDR{cond} Rd, <a_mode2>
+    Word with user-mode privilege               LDR{cond}T Rd, <a_mode2P>
+    Byte                                        LDR{cond}B Rd, <a_mode2>
+    Byte with user-mode privilege               LDR{cond}BT Rd, <a_mode2P>
+    Byte signed                                 LDR{cond}SB Rd, <a_mode3>
+    Halfword                                    LDR{cond}H Rd, <a_mode3>
+    Halfword signed                             LDR{cond}SH Rd, <a_mode3>
+
+    1.2.2 STORE
+    Word                                        STR{cond} Rd, <a_mode2>
+    Word with User-mode privilege               STR{cond}T Rd, <a_mode2P>
+    Byte                                        STR{cond}B Rd, <a_mode2>
+    Byte with User-mode privilege               STR{cond}BT Rd, <a_mode2P>
+    Halfword                                    STR{cond}H Rd, <a_mode3>
+    Increment before                            STM{cond}IB Rd{!}, <reglist>{^}
+    Increment after                             STM{cond}IA Rd{!}, <reglist>{^}
+    Decrement before                            STM{cond}DB Rd{!}, <reglist>{^}
+    Decrement after                             STM{cond}DA Rd{!}, <reglist>{^}
+    Stack operations                            STM{cond}<a_mode4S> Rd{!}, <reglist>
+    User registers                              STM{cond}<a_mode4S> Rd{!}, <reglist>^
+
+    1.2.3 Offsets
+
+    Immediate offset                            [Rn, #+/-12bit_Offset]
+    Register offset                             [Rn, +/-Rm]
+    Scaled register offset                      [Rn, +/-Rm, LSL #5bit_shift_imm]
+                                                [Rn, +/-Rm, LSR #5bit_shift_imm]
+                                                [Rn, +/-Rm, ASR #5bit_shift_imm]
+                                                [Rn, +/-Rm, ROR #5bit_shift_imm]
+                                                [Rn, +/-Rm, RRX]
+    Pre-indexed immediate offset                [Rn, #+/-12bit_Offset]!
+    Pre-indexed register offset                 [Rn, +/-Rm]!
+    Pre-indexed scaled register offset          [Rn, +/-Rm, LSL #5bit_shift_imm]!
+                                                [Rn, +/-Rm, LSR #5bit_shift_imm]!
+                                                [Rn, +/-Rm, ASR #5bit_shift_imm]!
+                                                [Rn, +/-Rm, ROR #5bit_shift_imm]!
+                                                [Rn, +/-Rm, RRX]!
+    Post-indexed immediate offset               [Rn], #+/-12bit_Offset
+    Post-indexed register offset                [Rn], +/-Rm
+    Post-indexed scaled register offset         [Rn], +/-Rm, LSL #5bit_shift_imm
+                                                [Rn], +/-Rm, LSR #5bit_shift_imm
+                                                [Rn], +/-Rm, ASR #5bit_shift_imm
+                                                [Rn], +/-Rm, ROR #5bit_shift_imm
+                                                [Rn, +/-Rm, RRX]
+
+    1.2.4 Multiple block data operations
+    Increment before                            LDM{cond}IB Rd{!}, <reglist>{^}
+    Increment after                             LDM{cond}IA Rd{!}, <reglist>{^}
+    Decrement before                            LDM{cond}DB Rd{!}, <reglist>{^}
+    Decrement after                             LDM{cond}DA Rd{!}, <reglist>{^}
+    Stack operations                            LDM{cond}<a_mode4L> Rd{!}, <reglist>
+    Stack operations and restore CPSR           LDM{cond}<a_mode4L> Rd{!}, <reglist+pc>^
+    User registers                              LDM{cond}<a_mode4L> Rd{!}, <reglist>^
+
+    1.3 Stack
+
+    1.3.1 Load
+    IA    Increment after        FD    Full descending
+    IB    Increment before       ED    Empty descending
+    DA    Decrement after        FA    Full ascending
+    DB    Decrement before       EA    Empty ascending
+
+    1.3.2 Store
+    IA    Increment after        EA    Empty ascending
+    IB    Increment before       FA    Full ascending
+    DA    Decrement after        ED    Empty descending
+    DB    Decrement before       FD    Full descending
+
+    1.4 Flow Control
+
+    Branch                                      B{cond} label
+    Branch with link                            BL{cond} label
+    Branch and exchange instruction set         BX{cond} Rn
+
+    EQ    Equal
+    NE    Not equal
+    CS    Unsigned higher, or same
+    CC    Unsigned lower
+    MI    Negative
+    PL    Positive, or zero
+    VS    Overflow
+    VC    No overflow
+    HI    Unsigned higher
+    LS    Unsigned lower, or same
+    GE    Greater, or equal
+    LT    Less than
+    GT    Greater than
+    LE    Less than, or equal
+    AL    Always
+
+    1.5 Bitwise 
+
+    Compare                                     CMP{cond} Rd, <Oprnd2>
+    Compare negative                            CMN{cond} Rd, <Oprnd2>
+    Logical Test                                TST{cond} Rn, <Oprnd2>
+    Test equivalence                            TEQ{cond} Rn, <Oprnd2>
+    AND                                         AND{cond}{S} Rd, Rn, <Oprnd2>
+    EOR                                         EOR{cond}{S} Rd, Rn, <Oprnd2>
+    ORR                                         ORR{cond}{S} Rd, Rn, <Oprnd2>
+    Bit clear                                   BIC{cond}{S} Rd, Rn, <Oprnd2>
+    Logical shift left                          Rm LSL #5bit_Imm
+    Logical shift right                         Rm LSR #5bit_Imm
+    Arithmetic shift right                      Rm ASR #5bit_Imm
+    Rotate right                                Rm ROR #5bit_Imm
+    Logical shift left                          Rm LSL Rs
+    Logical shift right                         Rm LSR Rs
+    Arithmetic shift right                      Rm ASR Rs
+    Rotate right                                Rm ROR Rs
+    Rotate right extended                       Rm RRX
+
+______________________________________________________________________________________________________________________________________
+
+2. Subroutines
+
+**in main.s***
+    ...code...
+
+    push{}  ;Push all registers to be used in subroutine onto stack to keep original values safe.
+
+    push{}  ;Push registers to be passed into the fuction through the stack.
+
+    BL {subroutine_name}
+
+    pop{}   ;Pop off return values save onto stack from function call.
+
+    pop{}   ;Pop off all saved registers that were push before the subroutine call.
+
+    ...code...
+
+B:  STOP b
+--------------------------------------------------------------------------------------------
+;   {subroutine_name} subroutine
+;   {description of functionality of subroutine}
+;   {Registers Used/Pass into subroutine Declared}
+;   RX - {Register Functionality within subroutine}
+
+{subroutine_name}:
+
+    pop{}   ;Pop off all registers that have been passed into the fuction through the stack.
+
+    ...code...
+
+    push{}  ;Push return values onto stack to be returned to function call.
+
+    BX LR
+
+______________________________________________________________________________________________________________________________________
+
+3. Ascii Table
+
+DEC	 |	HEX	   |    Symbol   |  Name
+------------------------------------------------------------------------	
+32		0x20		 		 	Space
+33		0x21		!		 	Exclamation mark
+34		0x22		"		    Double quotes (or speech marks)
+35		0x23		#		 	Number
+36		0x24		$		 	Dollar
+37		0x25		%		 	Per cent sign
+38		0x26		&			Ampersand
+39		0x27		'		 	Single quote
+40		0x28		(		 	Open parenthesis (or open bracket)
+41		0x29		)		 	Close parenthesis (or close bracket)
+42		0x2A		*		 	Asterisk
+43		0x2B		+		 	Plus
+44		0x2C		,		 	Comma
+45		0x2D		-		 	Hyphen
+46		0x2E		.		 	Period, dot or full stop
+47		0x2F		/		 	Slash or divide
+48		0x30		0		 	Zero
+49		0x31		1		 	One
+50		0x32		2		 	Two
+51		0x33		3		 	Three
+52		0x34		4		 	Four
+53		0x35		5		 	Five
+54		0x36		6		 	Six
+55		0x37		7		 	Seven
+56		0x38		8		 	Eight
+57		0x39		9		 	Nine
+58		0x3A		:		 	Colon
+59		0x3B		;		 	Semicolon
+60		0x3C		<			Less than (or open angled bracket)
+61		0x3D		=		 	Equals
+62		0x3E		>			Greater than (or close angled bracket)
+63		0x3F		?		 	Question mark
+64		0x40		@		 	At symbol
+65		0x41		A		 	Uppercase A
+66		0x42		B		 	Uppercase B
+67		0x43		C		 	Uppercase C
+68		0x44		D	        Uppercase D
+69		0x45		E		 	Uppercase E
+70		0x46		F		 	Uppercase F
+71		0x47		G		 	Uppercase G
+72		0x48		H		 	Uppercase H
+73		0x49		I		 	Uppercase I
+74		0x4A		J		 	Uppercase J
+75		0x4B		K		 	Uppercase K
+76		0x4C		L		 	Uppercase L
+77		0x4D		M		 	Uppercase M
+78		0x4E		N		 	Uppercase N
+79		0x4F		O		 	Uppercase O
+80		0x50		P		 	Uppercase P
+81		0x51		Q		 	Uppercase Q
+82		0x52		R		 	Uppercase R
+83		0x53		S		 	Uppercase S
+84		0x54		T		 	Uppercase T
+85		0x55		U		 	Uppercase U
+86		0x56		V		 	Uppercase V
+87		0x57		W		 	Uppercase W
+88		0x58		X		 	Uppercase X
+89		0x59		Y		 	Uppercase Y
+90		0x5A		Z		 	Uppercase Z
+91		0x5B		[		 	Opening bracket
+92		0x5C		\		 	Backslash
+93		0x5D		]		 	Closing bracket
+94		0x5E		^		 	Caret - circumflex
+95		0x5F		_		 	Underscore
+96		0x60		`		 	Grave accent
+97		0x61		a		 	Lowercase a
+98		0x62		b		 	Lowercase b
+99		0x63		c		 	Lowercase c
+100		0x64		d		 	Lowercase d
+101		0x65		e		 	Lowercase e
+102		0x66		f		 	Lowercase f
+103		0x67		g		 	Lowercase g
+104		0x68		h		 	Lowercase h
+105		0x69		i		 	Lowercase i
+106		0x6A		j		 	Lowercase j
+107		0x6B		k		 	Lowercase k
+108		0x6C		l		 	Lowercase l
+109		0x6D		m		 	Lowercase m
+110		0x6E		n		 	Lowercase n
+111		0x6F		o		 	Lowercase o
+112		0x70		p		 	Lowercase p
+113		0x71		q		 	Lowercase q
+114		0x72		r		 	Lowercase r
+115		0x73		s		 	Lowercase s
+116		0x74		t		 	Lowercase t
+117		0x75		u	 	    Lowercase u
+118		0x76		v		 	Lowercase v
+119		0x77		w		 	Lowercase w
+120		0x78		x		 	Lowercase x
+121		0x79		y		 	Lowercase y
+122		0x7A		z		 	Lowercase z
+123		0x7B		{		 	Opening brace
+124		0x7C		|		 	Vertical bar
+125		0x7D		}		 	Closing brace
+126		0x7E		~		 	Equivalency sign - tilde
+127		0x7F				 	Delete
+128		0x80		€		    Euro sign
