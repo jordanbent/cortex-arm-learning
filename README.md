@@ -54,12 +54,26 @@ These features are all in addition to the already existing features of the debug
 
 In C:/
 VSARM
+[minGW](https://osdn.net/projects/mingw/downloads/68260/mingw-get-setup.exe/)
+Download Into C:\VSARM
+On command line:
+
+```bash
+C:\>setx PATH "C:\VSARM\minGW\bin"
+```
+[armcc](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+Download :gcc-arm-none-eabi-9-2019-q4-major-win32.exe
+Into C:\VSARM
+Rename folder armcc
+
+[Jlink](segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack)
+Download J-Link Software and Documentation Pack
+
 
 Command Line
 
 ```bash
 C:\>setx PATH "C:\VSARM\armcc\bin"
-C:\>setx PATH "C:\VSARM\mingw\mingw32\bin"
 ```
 f1 - Settings JSON : add 
 "cortex-debug.armToolchainPath": "${env:VSARM}\\armcc\\bin\\",
