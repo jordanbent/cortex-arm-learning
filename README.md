@@ -157,19 +157,22 @@ Note: Download file to C:\VSARM.
 ```
 Rename download foler, in C:\VSARM, to: armcc.
 
-Then in your command line run the following command:
+Then you must add the following path:
 ```bash
-C:\>setx PATH "C:\VSARM\armcc\bin"
+C:\VSARM\armcc\bin
 ```
+to your PATH variable located in the System Variables in your system's Enviornment Variables. To see how to do this follow the [tutorial](https://hbfsrobotics.com/blog/configuring-vs-code-arm-development-stm32cubemx).
 ```
 Note: The command is run while the current dierctory is C:
 ```
 
 #### STLink to JLink
 
-STLink and JLink are linka to communicate between your board and your computer. Some STM32 boards are inbuilt with STLink, but we nned to change it to JLink.
+STLink and JLink are links used to communicate between your board and your computer. If your board is configured with STLink, change it to JLink.
 
 Flash board to be used with JLink rather than STLink using [STLink Reflash](https://www.segger.com/downloads/jlink#STLink_Reflash). Using option (1)Upgrade to JLink.
+
+#### JLink
 
 Download [J-Link Software and Documentation Pack](segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack)
 ```
@@ -181,7 +184,7 @@ Note: Download file to C:\VSARM.
 Currently Setup for STM32F411 Cortex M-4 core.
 ```
 
-If have a different version of the board, find .svd file and all to .ignore file and in vscode folder change launch file for project.
+If have a different version of the board, find .svd file and add to .ignore file and in vscode folder, change launch file for project, according to your board.
 
 ## Contributing
 Pull requests are welcome. 
