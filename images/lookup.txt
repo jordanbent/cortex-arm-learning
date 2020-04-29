@@ -5,10 +5,10 @@ Use for Cortex Debug Master Extension for Visual Studio Code
 1. Instructions
 
     Rc = Destination Register
-    Rn = 
-    <Oprnd2> = 
-    {cond} = 
-    {S} = 
+    Rn 
+    <Oprnd2> 
+    {cond} 
+    {S} 
 
     1.1 Move
 

@@ -9,7 +9,6 @@ export class MemoryContentProvider implements vscode.TextDocumentContentProvider
     public provideTextDocumentContent(uri: vscode.Uri): Thenable<string> {
         return new Promise((resolve, reject) => {
             const query = this.parseQuery(uri.query);
-
             const addressExpr = query['address'];
 
             let length: number = (this.parseHexOrDecInt(query['length']));
@@ -21,7 +20,6 @@ export class MemoryContentProvider implements vscode.TextDocumentContentProvider
             else
                 length *= elemSize
 
-            console.log(length)
             const dimensions = query['dimensions'];
             let rows:number;
             let cols:number;
@@ -76,15 +74,11 @@ export class MemoryContentProvider implements vscode.TextDocumentContentProvider
                             else if(display === 'ASCII' || display === 'LETTERS'|| display === 'ALPHABET')
                             {
                                 var byteNum = hexFormat(bytes[i+3], 2, false)+hexFormat(bytes[i+2], 2, false)+hexFormat(bytes[i+1], 2, false)+hexFormat(bytes[i], 2, false);
-                                console.log('hex to ascii',byteNum)
-                                console.log('number', parseInt(byteNum,16))
                                 byte = String.fromCharCode(parseInt(byteNum,16))
                             }
                             else if(display === 'DEC' || display === 'DECIMAL' || display === '10')
                             {
                                 byteNum = hexFormat(bytes[i+3], 2, false)+hexFormat(bytes[i+2], 2, false)+hexFormat(bytes[i+1], 2, false)+hexFormat(bytes[i], 2, false);
-                                console.log('byte', byteNum)
-                                console.log('numb', parseInt(byteNum,16))
                                 byte = (parseInt(byteNum,16)).toString(10)
                             }
                             else if(display === 'BIN' || display === 'BINARY' || display === '2')
@@ -150,9 +144,7 @@ export class MemoryContentProvider implements vscode.TextDocumentContentProvider
                         else
                             arrayOutput += ', ';
                     }
-                    else{
-                        console.log('memory')
-                        
+                    else{                        
                         if(beginningAddress != 0)
                         {
                             for(let j=0;j<beginningAddress;j++)
@@ -171,7 +163,6 @@ export class MemoryContentProvider implements vscode.TextDocumentContentProvider
                         {
                             memoryOutput +='\n'
                             lineAddress += hexNLine
-                            console.log(addressLive)
                             if(i <= length-elemSize)
                                 memoryOutput += hexFormat(lineAddress, 2, false) + ': ';
                         }
@@ -182,7 +173,6 @@ export class MemoryContentProvider implements vscode.TextDocumentContentProvider
                     }
                     i+=elemSize;
                 }
-                console.log('array',array)
                 if(array)
                     output += arrayOutput;
                 else

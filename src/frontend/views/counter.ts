@@ -14,8 +14,8 @@ export class CounterTreeProvider implements TreeDataProvider<BaseNode> {
     public _onDidChangeTreeData: EventEmitter<BaseNode | undefined> = new EventEmitter<BaseNode | undefined>();
     public readonly onDidChangeTreeData: Event<BaseNode | undefined> = this._onDidChangeTreeData.event;
 
-    private counter: CounterNode[];
-    private countNum: string;
+    private counters: CounterNode[];
+    private values: string[][];
     private loaded : boolean = false;
 
     //Obtaining memory from 0xE0001004 to 0xE0001018 word-wise
@@ -27,8 +27,8 @@ export class CounterTreeProvider implements TreeDataProvider<BaseNode> {
     private FOLDCNT = 0xE0001018;
 
     constructor() {
-        this.counter = [];
-        this.countNum = '';
+        this.counters = [];
+        this.values = [];
     }
 
     public performanceCounter(): void {
@@ -74,7 +74,22 @@ export class CounterTreeProvider implements TreeDataProvider<BaseNode> {
 
             //instructions = CYCCNT - CPICNT - EXCCNT - SLEEPCNT - LSUCNT + FOLDCNT 
             var totalCost = cyccnt - cpicnt - exccnt - sleepcnt - lsucnt + foldcnt;
-            this.countNum = ''+totalCost;
+            let node = ['Performance Count', totalCost.toString()]
+            this.values.push(node)
+            node = ['', '']
+            this.values.push(node)
+            node = ['CPI Count', cpicnt.toString()]
+            this.values.push(node)
+            node = ['EXE Count', exccnt.toString()]
+            this.values.push(node)
+            node = ['Sleep Count', sleepcnt.toString()]
+            this.values.push(node)
+            node = ['LSU Count', lsucnt.toString()]
+            this.values.push(node)
+            node = ['Fold Count', foldcnt.toString()]
+            this.values.push(node)
+            
+            console.log(this.values)
 
         }, (error) => {
             const msg = error.message || '';
@@ -85,8 +100,10 @@ export class CounterTreeProvider implements TreeDataProvider<BaseNode> {
     public updateCounter(){
         this.performanceCounter();
 
-        this.counter.forEach((node) => {
-            node.setCount(this.countNum)
+        this.counters.forEach((node, idx) => {
+            let cnt = this.values[idx]
+            console.log('n',node,'va',cnt)
+            node.setCount(cnt[1])
         })
         
         this._onDidChangeTreeData.fire();
@@ -95,8 +112,27 @@ export class CounterTreeProvider implements TreeDataProvider<BaseNode> {
     public refresh(): void {
         if (debug.activeDebugSession) {
             if (!this.loaded) {
-                const count = new CounterNode(this.countNum);
-                this.counter.push(count);
+                var count = new CounterNode('Performance Counter:', '0','');
+                this.counters.push(count);
+
+                count = new CounterNode('', '','');
+                this.counters.push(count);
+
+                count = new CounterNode('CPI Counter:', '0','Counts additional cycles required to execute multi-cycle instructions and instruction fetch stalls.');
+                this.counters.push(count);
+
+                count = new CounterNode('EXE Counter:', '0','Counts the cycles spent performing exception entry and exit procedures.');
+                this.counters.push(count);
+
+                count = new CounterNode('Sleep Counter:', '0','Counts cycles spent sleeping.');
+                this.counters.push(count);
+
+                count = new CounterNode('LSU Counter:', '0','Counts cycles spent waiting for loads and stores to complete.');
+                this.counters.push(count);
+
+                count = new CounterNode('Fold Counter:', '0','Counts cycles saved by instructions which execute in zero cycles.');
+                this.counters.push(count);
+
                 this.loaded = true;
                 this._onDidChangeTreeData.fire();
             }
@@ -113,8 +149,8 @@ export class CounterTreeProvider implements TreeDataProvider<BaseNode> {
 
 
     public getChildren(element?: BaseNode): ProviderResult<BaseNode[]> {
-        if (this.loaded && this.counter.length > 0) {
-            return element ? element.getChildren() : this.counter;
+        if (this.loaded && this.counters.length > 0) {
+            return element ? element.getChildren() : this.counters;
         }
         else if (!this.loaded) {
             return (MessageNode["Not Active"]);
@@ -126,7 +162,7 @@ export class CounterTreeProvider implements TreeDataProvider<BaseNode> {
 
     public _saveState(fspath: string) {
         const state: NodeSetting[] = [];
-        this.counter.forEach((r) => {
+        this.counters.forEach((r) => {
             state.push(...r._saveState());
         });
 
@@ -139,15 +175,15 @@ export class CounterTreeProvider implements TreeDataProvider<BaseNode> {
             this._saveState(fspath);
         }
         this.loaded = false;
-        this.counter = [];
-        this.countNum = '';
+        this.counters = [];
+        this.values = [];
         this._onDidChangeTreeData.fire();
     }
 
     public debugSessionStarted() {
         this.loaded = false;
-        this.counter = [];
-        this.countNum = '';
+        this.counters = [];
+        this.values = [];
         this._onDidChangeTreeData.fire();
     }
 

@@ -1,7 +1,8 @@
-import { TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { TreeItem, TreeItemCollapsibleState} from 'vscode';
 
 import { BaseNode } from './basenode';
 import { FieldNode } from './fieldnode';
+import { CounterFieldNode } from './counterfieldnode';
 import { NodeSetting } from '../../../common';
 
 export interface CounterValue {
@@ -11,19 +12,29 @@ export interface CounterValue {
 
 export class CounterNode extends BaseNode {
     private fields: FieldNode[];
+    private cfields: CounterFieldNode[];
     private name: string;
     private currentCount: string; 
     
 
-    constructor(public count: string) {
+    constructor(public nam: string, public count: string, public description:string) {
         super(null);
-        this.name = 'Performance Counter: '
+        this.name = nam
         this.currentCount = count;
+
+        if(this.name === 'CPI Counter:'||
+            this.name === 'EXE Counter:'||
+            this.name === 'Sleep Counter:'||
+            this.name === 'LSU Counter:'||
+            this.name === 'Fold Counter:')
+            {
+                this.cfields = [new CounterFieldNode(description, this)];
+            }
     }
 
     public getTreeItem(): TreeItem | Promise<TreeItem> {
 
-        const state = this.fields && this.fields.length > 0 ?
+        const state = this.cfields && this.cfields.length > 0 ?
             (this.expanded ? TreeItemCollapsibleState.Expanded : TreeItemCollapsibleState.Collapsed)
             : TreeItemCollapsibleState.None;
         
@@ -33,8 +44,8 @@ export class CounterNode extends BaseNode {
         return item;
     }
 
-    public getChildren(): FieldNode[] {
-        return this.fields;
+    public getChildren(): CounterFieldNode[] {
+        return this.cfields;
     }
 
     public setCount(newValue: string) {
@@ -53,3 +64,4 @@ export class CounterNode extends BaseNode {
         return settings;
     }
 }
+

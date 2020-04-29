@@ -147,11 +147,6 @@
             },
             {
                 "category": "Cortex-ARM",
-                "command": "cortex-arm-learning.lookup",
-                "title": "View Lookup Table"
-            },
-            {
-                "category": "Cortex-ARM",
                 "command": "cortex-arm-learning.examineArray",
                 "title": "View Array"
             },
@@ -1407,10 +1402,6 @@
                 {
                     "command": "cortex-arm-learning.stack.copyValue",
                     "when": "false"
-                },
-                {
-                    "command": "cortex-arm-learning.lookup",
-                    "when": "debugType == cortex-arm-learning"
                 },
                 {
                     "command": "cortex-arm-learning.examineArray",

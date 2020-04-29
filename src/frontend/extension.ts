@@ -21,7 +21,7 @@ import { FileSWOSource } from './swo/sources/file';
 import { SerialSWOSource } from './swo/sources/serial';
 import { DisassemblyContentProvider } from './disassembly_content_provider';
 import { SymbolInformation, SymbolScope } from '../symbols';
-import { Cluster } from 'cluster';
+import { Cluster, eventNames } from 'cluster';
 
 interface SVDInfo {
     expression: RegExp;
@@ -40,6 +40,7 @@ export class CortexDebugExtension {
     private counterProvider: CounterTreeProvider;
     private memoryProvider: MemoryContentProvider;
     private arrayProvider: MemoryContentProvider;
+    private arrayRequests;
 
     private peripheralTreeView: vscode.TreeView<PeripheralBaseNode>;
     private registerTreeView: vscode.TreeView<BaseNode>;
@@ -56,6 +57,7 @@ export class CortexDebugExtension {
         this.counterProvider = new CounterTreeProvider();
         this.memoryProvider = new MemoryContentProvider();
         this.arrayProvider = new MemoryContentProvider();
+        this.arrayRequests = [];
 
         const myProvider = new class implements vscode.TextDocumentContentProvider 
         {
@@ -64,15 +66,20 @@ export class CortexDebugExtension {
     		onDidChange = this.onDidChangeEmitter.event;
 
     		provideTextDocumentContent(uri: vscode.Uri): string {
-                console.log(uri)
-                
-                fs.readFile(uri.path, function read(err, data) {
-                    if (err) {
-                        throw err;
-                    }
-                    return data;
-                });
-                return 'Error'
+                if(uri.scheme !== 'lookup'){
+                    return;
+                }
+
+                    console.log('uri',uri)
+                    let path = vscode.workspace.rootPath;
+                    path = path+'\images\lookup.txt'
+                    console.log("path: ",path)
+                    fs.readFile(path, function read(err, data) {
+                        if (err) {
+                            return('Error '+err);
+                        }
+                        return 'lookup'+( data.toString('utf8') );
+                    });
             }
 	    }
 
@@ -109,13 +116,21 @@ export class CortexDebugExtension {
             vscode.workspace.registerTextDocumentContentProvider('disassembly', new DisassemblyContentProvider()),
 
             vscode.commands.registerCommand('cortex-arm-learning.lookup', async () => {
-                const uri = vscode.Uri.file(process.cwd()+'\\lookup.txt');
-                uri.scheme === 'file';
-                console.log(uri)                                                                
-                
-                let doc = await vscode.workspace.openTextDocument(uri); // calls back into the provider
-                
-                await vscode.window.showTextDocument(doc, { preview: false }); 
+                let path = vscode.workspace.rootPath;
+                path = path+'\images\lookup.txt'
+                const uri = vscode.Uri.file(path)
+                if(uri.scheme !== 'lookup'){
+                    return;
+                }
+                let file = 'lookup'    
+                console.log("path: ",path, 'uri',uri)                                                      
+                vscode.workspace.openTextDocument(uri)
+                .then((doc) => {
+                    vscode.window.showTextDocument(doc, { viewColumn: 2, preview: false });
+            
+                }, (error) => {
+                    vscode.window.showErrorMessage(`Failed to provide Lookup Table: ${error}`);
+                }); 
             }),
 
             vscode.commands.registerCommand('cortex-arm-learning.peripherals.updateNode', this.peripheralsUpdateNode.bind(this)),
@@ -138,6 +153,9 @@ export class CortexDebugExtension {
             vscode.window.onDidChangeActiveTextEditor(this.activeEditorChanged.bind(this)),
             vscode.window.onDidChangeTextEditorSelection((e: vscode.TextEditorSelectionChangeEvent) => {
                 if (e && e.textEditor.document.fileName.endsWith('.cdmem')) { this.memoryProvider.handleSelection(e); }
+            }),
+            vscode.window.onDidChangeTextEditorSelection((e: vscode.TextEditorSelectionChangeEvent) => {
+                if (e && e.textEditor.document.fileName.endsWith('.cdmem')) { this.arrayProvider.handleSelection(e); }
             }),
 
             vscode.debug.registerDebugConfigurationProvider('cortex-arm-learning', new CortexDebugConfigurationProvider(context)),
@@ -301,6 +319,83 @@ export class CortexDebugExtension {
 
     private examineArray()
     {
+        function validateAddress(address: string) {
+            if (address === '') {
+                return null;
+            }
+            return address;
+        }
+
+        if (!vscode.debug.activeDebugSession) {
+            vscode.window.showErrorMessage('No debugging session available');
+            return;
+        }
+
+        vscode.window.showInputBox({
+            placeHolder: 'Enter the Start Address of your array. Use 0x prefix for hexidecimal numbers',
+            ignoreFocusOut: true,
+            prompt: 'Memory Address'
+        }).then(
+            (address) => {
+                address = address.trim();
+                if (!validateAddress(address)) {
+                    vscode.window.showErrorMessage('Invalid memory address entered');
+                    Reporting.sendEvent('Examine Array', 'Invalid Address', address);
+                    return;
+                }
+                let used = false;
+                let request;
+                this.arrayRequests.forEach(element => {
+                    console.log('addr',element[0],'arrd',address)
+                    if(element[0].toLowerCase() === address.toLowerCase())
+                    {
+                        console.log('equasl')
+                        request = element;
+                        used = true;
+                                      
+                    }
+                });
+                if(used)
+                {
+                    vscode.window.showInputBox({
+                        placeHolder: 'Would you like to use the previous request for MEMORY ADDRESS: '+address+'?',
+                        ignoreFocusOut: true,
+                        prompt: 'Or choose a new set of options.'
+                    }).then(
+                        (answer) => {
+                            console.log('inut box>>')
+                            answer = answer.trim();
+                            console.log('answer =',answer)
+                            if(answer.toLowerCase() === 'yes' || answer.toLowerCase() === 'y')
+                            {
+                                console.log('yess>>')
+                                this.accessMemory(request[1], 'examinearray')
+                                used = true;
+                            }
+                            else if(answer.toLowerCase() === 'no' || answer.toLowerCase() === 'n')
+                            {
+                                console.log('else box>>')
+                                this.arrayRequest(address)
+                            }
+                            else
+                            {
+                                vscode.window.showErrorMessage('Invalid entry entered');
+                                Reporting.sendEvent('Examine Array', 'Invalid Promt', answer);
+                                return;
+                            }
+                        })          
+                }
+                else
+                {
+                    console.log('usedd box>>')
+                    this.arrayRequest(address)
+                }                
+                },
+                (error) => {});
+    }
+
+    private arrayRequest(address)
+    {
         function validateValue(length) {
 
             let reg = /\d+/g;
@@ -327,101 +422,85 @@ export class CortexDebugExtension {
                 return null;
         }
 
-        function validateAddress(address: string) {
-            if (address === '') {
-                return null;
-            }
-            return address;
-        }
-
-        if (!vscode.debug.activeDebugSession) {
-            vscode.window.showErrorMessage('No debugging session available');
-            return;
-        }
-
         vscode.window.showInputBox({
-            placeHolder: 'Enter the Start Address of your array. Use 0x prefix for hexidecimal numbers',
+            placeHolder: 'Enter the Element Size of your array: BYTE, HALFWORD, WORD.',
             ignoreFocusOut: true,
-            prompt: 'Memory Address'
+            prompt: 'Element Size'
         }).then(
-            (address) => {
-                address = address.trim();
-                if (!validateAddress(address)) {
-                    vscode.window.showErrorMessage('Invalid memory address entered');
-                    Reporting.sendEvent('Examine Array', 'Invalid Address', address);
+            (size) => {
+                size = size.trim()
+                let sizeVal = validateSize(size);
+                if (!sizeVal) {
+                    vscode.window.showErrorMessage('Invalid element size entered');
+                    Reporting.sendEvent('Examine Array', 'Invalid Size', size);
                     return;
                 }
-                vscode.window.showInputBox({
-                    placeHolder: 'Enter the Element Size of your array: BYTE, HALFWORD, WORD.',
+                 vscode.window.showInputBox({
+                    placeHolder: 'Enter the dimensions of your array: 1D: Length; 2D: Rows, Cols',
                     ignoreFocusOut: true,
-                    prompt: 'Element Size'
+                    prompt: 'Dimensions'
                 }).then(
-                    (size) => {
-                        size = size.trim()
-                        let sizeVal = validateSize(size);
-                        if (!sizeVal) {
-                            vscode.window.showErrorMessage('Invalid element size entered');
-                            Reporting.sendEvent('Examine Array', 'Invalid Size', size);
-                            return;
-                        }
-                         vscode.window.showInputBox({
-                            placeHolder: 'Enter the dimensions of your array: 1D: Length; 2D: Rows, Cols',
-                            ignoreFocusOut: true,
-                            prompt: 'Dimensions'
-                        }).then(
-                            (dimensions) => {
-                            dimensions = dimensions.trim();
-                            let dims = validateValue(dimensions);
-                            if (!dims) {
-                                vscode.window.showErrorMessage('Invalid length entered');
-                                Reporting.sendEvent('Examine Array', 'Invalid Length', dimensions);
-                                return;
-                            }
-                            let len = 1;
-                            dimensions = '';
-                            dims.forEach(function (value){
-                                dimensions += value+','
-                                len *= (+value);
-                            })
-                            var length = len * sizeVal;
+                    (dimensions) => {
+                    dimensions = dimensions.trim();
+                    let dims = validateValue(dimensions);
+                    if (!dims) {
+                        vscode.window.showErrorMessage('Invalid length entered');
+                        Reporting.sendEvent('Examine Array', 'Invalid Length', dimensions);
+                        return;
+                    }
+                    let len = 1;
+                    dimensions = '';
+                    dims.forEach(function (value){
+                        dimensions += value+','
+                        len *= (+value);
+                    })
+                    var length = len * sizeVal;
 
-                            vscode.window.showInputBox({
-                                placeHolder: 'Memory Display Type: Hex (default), Ascii, Decimal, Binary',
-                                ignoreFocusOut: true,
-                                prompt: 'Display Type'
-                            }).then(
-                                (displayType) => {
-                                    displayType = displayType.trim()
+                    vscode.window.showInputBox({
+                        placeHolder: 'Memory Display Type: Hex (default), Ascii, Decimal, Binary',
+                        ignoreFocusOut: true,
+                        prompt: 'Display Type'
+                    }).then(
+                        (displayType) => {
+                            displayType = displayType.trim()
 
-                                    const addrEnc:string = encodeURIComponent(`${address}`);             
-                                    const lenStr:string = length.toString();
-                                    
-                                    const array:string = 'true'
-                                    const sizeStr:string = sizeVal.toString();
-                                    const display:string = displayType;
-                                    
-                                    Reporting.sendEvent('Examine Array', 'Valid', `${address}-${lenStr}`); 
-                                    this.accessMemory('examinearray', addrEnc, lenStr, dimensions, array, sizeStr,display)
-                                },
-                                (error) => {});
+                            const addrEnc:string = encodeURIComponent(`${address}`);             
+                            const lenStr:string = length.toString();
+                            
+                            const array:string = 'true'
+                            const sizeStr:string = sizeVal.toString();
+                            const display:string = displayType;
+                            
+                            Reporting.sendEvent('Examine Array', 'Valid', `${address}-${lenStr}`); 
+                            var uri = vscode.Uri.parse(`examinearray:///Memory%20[${addrEnc},${lenStr}].cdmem?address=${addrEnc}&length=${lenStr}&dimensions=${dimensions}&array=${array}&size=${sizeVal}&display=${display}`)
+                            this.arrayRequests.push([address, uri])
+                            console.log('aray: ',this.arrayRequests)
+                            this.accessMemory(uri, 'examinearray')
                         },
                         (error) => {});
-                    },
-                    (error) => {});
                 },
                 (error) => {});
+            },
+            (error) => {});
     }
     
-    private accessMemory(docName, addrEnc, lengthString, dimensions, array, size, display){
+    private accessMemory(uri, docName){
         // tslint:disable-next-line:max-line-length
-        console.log(docName, addrEnc, lengthString, dimensions, array, size, display)
-        vscode.workspace.openTextDocument(vscode.Uri.parse(`${docName}:///Memory%20[${addrEnc},${lengthString}].cdmem?address=${addrEnc}&length=${lengthString}&dimensions=${dimensions}&array=${array}&size=${size}&display=${display}`))
+        console.log('accessing memory ')
+        vscode.workspace.openTextDocument(uri)
         .then((doc) => {
             vscode.window.showTextDocument(doc, { viewColumn: 2, preview: false });
-            Reporting.sendEvent('Examine Memory', 'Used');
+            if(docName == 'examinememory')
+                Reporting.sendEvent('Examine Memory', 'Used');
+            else if(docName == 'examinearray')
+                Reporting.sendEvent('Examine Array', 'Used');
         }, (error) => {
             vscode.window.showErrorMessage(`Failed to examine memory: ${error}`);
-            Reporting.sendEvent('Examine Memory', 'Error', error.toString());
+            if(docName == 'examinememory')
+                 Reporting.sendEvent('Examine Memory', 'Error', error.toString());
+            else if(docName == 'examinearray')
+                Reporting.sendEvent('Examine Array', 'Error', error.toString());
+            
         }); 
     }
 
@@ -483,9 +562,10 @@ export class CortexDebugExtension {
                         const sizeStr:string = '4';
                         const display:string = 'hex'
 
-                        Reporting.sendEvent('Examine Memory', 'Valid', `${address}-${length}`);
                         // tslint:disable-next-line:max-line-length
-                        this.accessMemory('examinememory', addrEnc, lenStr, dimensions, array, sizeStr,display)
+                        Reporting.sendEvent('Examine Memory', 'Valid', `${address}-${lenStr}`); 
+                        var uri = vscode.Uri.parse(`examinememory:///Memory%20[${addrEnc},${lenStr}].cdmem?address=${addrEnc}&length=${lenStr}&dimensions=${dimensions}&array=${array}&size=${sizeStr}&display=${display}`)
+                        this.accessMemory(uri, 'examinememory')
                     },
                     (error) => {
 
@@ -643,6 +723,9 @@ export class CortexDebugExtension {
         vscode.workspace.textDocuments.filter((td) => td.fileName.endsWith('.cdmem'))
             .forEach((doc) => { this.memoryProvider.update(doc); });
         if (this.swo) { this.swo.debugStopped(); }
+        vscode.workspace.textDocuments.filter((td) => td.fileName.endsWith('.cdmem'))
+            .forEach((doc) => { this.arrayProvider.update(doc); });
+        if (this.swo) { this.swo.debugStopped(); }
     }
 
     private receivedContinuedEvent(e) {
@@ -721,7 +804,7 @@ function interpolateString(tpl: string, data: object): string {
 export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "cortex-arm-learning" is now active!');
     
-    const command = 'cortex-debud-master.make';
+    const command = 'cortex-arm-learning.make';
     const commandHandler = () => {
         const vars = {
 
@@ -779,7 +862,7 @@ export function activate(context: vscode.ExtensionContext) {
     makeButton.color = 'white'
     makeButton.command = command
     makeButton.text = 'Build - Debugger'
-    makeButton.tooltip = 'cortex-arm-learning'
+    makeButton.tooltip = 'Cortex-ARM'
     makeButton.show()
     return new CortexDebugExtension(context);
 }

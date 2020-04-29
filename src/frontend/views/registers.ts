@@ -127,19 +127,6 @@ export class RegisterTreeProvider implements TreeDataProvider<BaseNode> {
         this._onDidChangeTreeData.fire();
     }
 
-    public getStackPointerValue()
-    {
-        if (this.loaded && this.registers.length > 0) {
-            for(let i in this.registers)
-            {
-                if(this.registers[i].name === 'sp')
-                {
-                    return this.registers[i].getCurrentValue();
-                }
-            }
-        }
-    }
-
     public getChildren(element?: BaseNode): ProviderResult<BaseNode[]> {
         if (this.loaded && this.registers.length > 0) {
             return element ? element.getChildren() : this.registers;

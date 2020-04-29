@@ -62,6 +62,9 @@ export class StackTreeProvider implements TreeDataProvider<BaseNode> {
                 var spString = '';
                 if(i == 0)
                     spString = 'SP-> ';
+                else 
+                    spString = '        ';
+                    
                 memoryAddress = spString+'0x'+hexFormat(lineAddress, 2, false);
                 memoryAddress = memoryAddress.toUpperCase();               
 
@@ -82,12 +85,12 @@ export class StackTreeProvider implements TreeDataProvider<BaseNode> {
                 this.stack.push(sn);
                 lineAddress += 4;                
             }
-            const sn = new StackNode('0X20020000', '0x00000000');
+            const sn = new StackNode('        0X20020000', '0x00000000');
             this.stack.push(sn);
             this._onDidChangeTreeData.fire();
         }, (error) => {
             const msg = error.message || '';
-            vscode.window.showErrorMessage(`Unable to read memory from ${address} of length ${hexFormat(length, 8)}: ${msg}`);
+            vscode.window.showErrorMessage(`Invalid use of Stack. Stack is Full Descending Format. ${hexFormat(length, 8)}: ${msg} bytes is not valid memory within the stack.`);
         });
     }
    
